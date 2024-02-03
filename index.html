@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cz.mk</title>
+  <!-- 随机图片URL -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://source.unsplash.com/random/32x32">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://source.unsplash.com/random/16x16">
+  <!-- 其他标签页显示的图标 -->
+  <link rel="apple-touch-icon" sizes="180x180" href="https://source.unsplash.com/random/180x180">
+  <link rel="manifest" href="/site.webmanifest">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #000;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    .title-container {
+      position: relative;
+      text-align: center;
+      color: #fff;
+    }
+
+    .title {
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    .title span {
+      color: #ff8c00; /* 橙色 */
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: #808080; /* 灰色 */
+      margin-top: 20px;
+      text-decoration: none; /* 防止下划线出现 */
+    }
+
+    .subtitle a {
+      color: #808080; /* 灰色 */
+      text-decoration: none; /* 防止下划线出现 */
+    }
+
+    /* 动态效果 */
+    .title-container:hover .title,
+    .title-container:hover .subtitle {
+      animation: select 0.3s ease-in-out;
+    }
+
+    @keyframes select {
+      transform: scale(1.1);
+    }
+
+    /* 背景流星动画 */
+    .meteor-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .meteor {
+      position: absolute;
+      height: 1px;
+      width: 1px;
+      background-color: #fff;
+      opacity: 0;
+      animation: meteor 3s linear infinite, fadeIn 0.5s;
+    }
+
+    @keyframes meteor {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(500px, 500px) scale(0.2);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* 鼠标移动流星尾巴动画 */
+    .cursor-trail {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .trail-line {
+      position: absolute;
+      background-color: #fff;
+      width: 1px;
+      height: 1px;
+      opacity: 0.5;
+      transform-origin: center;
+      animation: trailFade 0.5s linear;
+    }
+
+    @keyframes trailFade {
+      0% {
+        transform: scale(10);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="meteor-container">
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const meteorContainer = document.querySelector(".meteor-container");
+
+        function createRandomMeteor() {
+          const meteor = document.createElement("div");
+          meteor.classList.add("meteor");
+
+          function setRandomProperties() {
+            let overlapping = true;
+
+            while (overlapping) {
+              const x = Math.random() * window.innerWidth;
+              const y = Math.random() * window.innerHeight;
+
+              // Check for overlapping with existing meteors
+              overlapping = Array.from(document.querySelectorAll('.meteor')).some(existingMeteor => {
+                const rect = existingMeteor.getBoundingClientRect();
+                return (
+                  x < rect.right &&
+                  x + meteor.offsetWidth > rect.left &&
+                  y < rect.bottom &&
+                  y + meteor.offsetHeight > rect.top
+                );
+              });
+
+              if (!overlapping) {
+                meteor.style.left = x + "px";
+                meteor.style.top = y + "px";
+              }
+            }
+
+            const size = Math.random() * (5 - 3) + 1;
+            meteor.style.width = size + "px";
+            meteor.style.height = size + "px";
+
+            const opacity = Math.random();
+            meteor.style.opacity = opacity;
+
+            const duration = Math.random() * (10 - 3) + 3;
+            meteor.style.animationDuration = `${duration}s`;
+          }
+
+          setRandomProperties();
+          meteorContainer.appendChild(meteor);
+
+          meteor.addEventListener("animationiteration", () => {
+            setRandomProperties();
+          });
+
+          meteor.addEventListener("animationend", () => {
+            meteor.remove();
+          });
+        }
+
+        // 一开始生成一些流星
+        for (let i = 1; i <= 10; i++) {
+          createRandomMeteor();
+        }
+
+        // 每隔一段时间生成新的流星
+        setInterval(() => {
+          createRandomMeteor();
+        }, 1000); // 每两秒生成一个新的流星
+      });
+    </script>
+  </div>
+
+  <div class="title-container">
+    <div class="title">
+      <span>Jung</span>
+    </div>
+    <div class="subtitle"><script>document.write('<a href="mailto:jung@whycue.com">jung@whycue.com</a>');</script></div>
+  </div>
+
+  <div class="cursor-trail"></div>
+
+  <script>
+    document.addEventListener("mousemove", function (e) {
+      const cursorTrail = document.querySelector(".cursor-trail");
+      const trailLine = document.createElement("div");
+      trailLine.classList.add("trail-line");
+      trailLine.style.left = e.clientX + "px";
+      trailLine.style.top = e.clientY + "px";
+      cursorTrail.appendChild(trailLine);
+
+      setTimeout(() => {
+        trailLine.remove();
+      }, 500);
+    });
+  </script>
+</body>
+</html>
